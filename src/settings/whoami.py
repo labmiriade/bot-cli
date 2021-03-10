@@ -1,10 +1,9 @@
 import click
 
-from src.cli_utils import CredsCommand
-from src.bot import Bot
+from ..repositories.bot import Bot
 
 
-@click.command(help="Mostra informazioni sull'utente", cls=CredsCommand)
+@click.command(help="Mostra informazioni sull'utente")
 @click.pass_context
 def whoami(ctx, username, password):
     """

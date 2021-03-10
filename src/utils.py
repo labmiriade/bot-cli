@@ -1,22 +1,25 @@
 import datetime
-from typing import Union, Tuple
+from typing import Union, Tuple, Optional
 
 import click
 
 
 def datefromt(t: int) -> datetime.date:
+    """
+    Returns a date object from a unix timestamp (milliseconds from 1970-01-01)
+    """
     return datetime.date.fromtimestamp(t / 1000)
 
 
-def tfromdate(date: Union[datetime.date, datetime.datetime]) -> int:
-    if isinstance(date, datetime.date):
-        dt = datetime.datetime(date.year, date.month, date.day)
-    else:
-        dt = date
+def tfromdate(date: datetime.date) -> int:
+    """
+    Returns the unixtimestamp to be sent to bot for a given date
+    """
+    dt = datetime.datetime(date.year, date.month, date.day, tzinfo=datetime.timezone.utc)
     return int(dt.timestamp()) * 1000
 
 
-def merge_id_desc(id: Union[str, int], description: str) -> str:
+def merge_id_desc(id: Union[str, int], description: Optional[str]) -> str:
     """
     Returns a string that merges the id and the description in a single string
 
@@ -28,19 +31,26 @@ def merge_id_desc(id: Union[str, int], description: str) -> str:
     Returns:
         a str with the merged values
     """
-    return f"{click.style(str(id), fg='yellow')}_{description.strip().replace(' ', '_')}"
+    desc = description.strip().replace(" ", "_")
+    aux = click.style(str(id), fg="yellow")
+    if not desc == "":
+        aux += f"_{desc}"
+    return aux
 
 
-def id_from_desc(desc: str) -> str:
+def unmerge_id_desc(desc: str) -> Tuple[str, Optional[str]]:
     """
-    Undo what has been done by `merge_id_desc` returning only the id for the component
+    Undo what has been done by `merge_id_desc` returning the id (first component)
     Args:
         desc (str): the descriptive value (<id>_<description>)
 
     Returns:
-        a str with the id
+        a tuple composed by a str with the id and a string with the description
     """
-    return str(desc.strip()).split("_")[0]
+    components = str(desc.strip()).split("_")
+    fst = components[0]
+    snd = " ".join(components[1:]) if len(components) > 1 else None
+    return fst, snd
 
 
 def parse_ore_minuti(s: str) -> Tuple[int, int]:

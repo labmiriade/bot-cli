@@ -4,11 +4,9 @@ from typing import Optional
 import click
 
 from .rapportini_printer import full_rapp, short_rapp
-from ..cli_utils import CredsCommand
-from ..bot import Bot
 
 
-@click.command(help="Mostra i rapportini inseriti", cls=CredsCommand)
+@click.command(help="Mostra i rapportini inseriti")
 @click.option(
     "-d",
     "--data",
@@ -29,8 +27,7 @@ from ..bot import Bot
     show_default=True,
 )
 @click.pass_obj
-def ls(repo, username, password, data: datetime.datetime, count: Optional[int], fmt):
-    repo = Bot(username, password)
+def ls(repo, data: datetime.datetime, count: Optional[int], fmt: str):
     if data is not None:
         data = data.replace(tzinfo=datetime.timezone.utc)
         count = count or 1

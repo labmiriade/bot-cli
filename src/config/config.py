@@ -1,7 +1,7 @@
 import click
 import toml
 
-from src.cli_utils import config as stored_config, CONFIG_FILE
+from src.cli_utils import get_stored_config, put_stored_config
 from src.rapportini.rapportini_printer import offices_choices
 
 
@@ -11,12 +11,12 @@ def config():
     Allows the user to update the saved configurations in the .mirbot toml file
     """
     # read the current values, to present them as defaults
-    current_values = stored_config
+    current_values = get_stored_config()
     click.secho(f" 🐷 Ora ti guiderò nell'impostazione delle configurazioni principali\n", fg="magenta")
 
     # Credentials
     #  update username and password
-    creds = stored_config.get("creds", {})
+    creds = current_values.get("creds", {})
     click.secho("Inserisci la tua mail aziendale", fg="green")
     creds["username"] = click.prompt("  username", default=creds.get("username"), type=click.STRING)
     click.echo("")  # add a newline char
@@ -34,6 +34,7 @@ def config():
     # Rapp
     #  default office
     rapp = current_values.get("rapp", {})
+    add = rapp.get("add", {})
     click.secho(
         "Impostiamo ora l'ufficio di default per i nuovi rapportini\n(potrai comunque cambiarlo ogni volta)",
         fg="bright_magenta",
@@ -42,14 +43,13 @@ def config():
     for office in offices_choices:
         click.secho(f"  - {office}", fg="bright_magenta")
     click.secho(f"Basta indicare il numero della relativa sede", fg="bright_magenta")
-    rapp["office"] = click.prompt("  sede", default=rapp.get("office"), type=click.STRING)
-    if rapp["office"].strip() == "":
-        rapp["office"] = None
+    add["sede~soft"] = click.prompt("  sede", default=add.get("sede~soft"), type=click.STRING)
+    if add["sede~soft"].strip() == "":
+        add["sede~soft"] = None
+    rapp["add"] = add
     current_values["rapp"] = rapp
     click.echo("")  # add a newline char
 
-    # Override the toml config file
-    with open(CONFIG_FILE, "w") as f:
-        toml.dump(current_values, f)
+    put_stored_config(current_values)
 
     click.secho(f" 🐷 Finito! se vuoi modificare il file manualmente, lo trovi in ~/.mirbot", fg="magenta")

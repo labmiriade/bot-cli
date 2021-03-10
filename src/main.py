@@ -2,7 +2,8 @@
 
 import click
 
-from src.cli_utils import AliasedGroup
+from .cli_utils import load_default_map
+from .click.aliased_group import AliasedGroup
 from .config import config
 from .rapportini import rapp
 from .settings import settings
@@ -22,9 +23,9 @@ le attività più comuni effettuate con BOT 🐷
 def cli(ctx):
     """
     This is the initial click.Group, here is named `cli` but the name used to call it is different,
-    usually `bot`.
+    probably `bot`.
     """
-    pass
+    ctx.default_map = load_default_map()
 
 
 cli.add_command(rapp)

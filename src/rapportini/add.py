@@ -1,13 +1,27 @@
 import copy
 import datetime
+from typing import Optional
 
 import click
 
-from src import OFFICE_ENV_VAR
-from ..cli_utils import envorconfig, CredsCommand
 from .rapportini_printer import offices_choices, full_rapp
-from ..bot import Bot, Commessa, Rapportino
-from ..utils import merge_id_desc, id_from_desc, parse_ore_minuti
+from ..cli_utils import stored_creds, get_default
+from ..repositories.bot import Bot, Commessa, Rapportino
+from ..utils import merge_id_desc, unmerge_id_desc, parse_ore_minuti
+
+
+def _create_bot() -> Optional[Bot]:
+    """
+    Workaround because reading ctx.obj in autocomplete methods
+    seems not working.
+
+    See Also:
+        - https://github.com/pallets/click/pull/1679
+    """
+    username, password = stored_creds()
+    if username is None or password is None:
+        return None
+    return Bot(username, password)
 
 
 def get_commesse_compl(ctx, args, incomplete: str):
@@ -22,8 +36,8 @@ def get_commesse_compl(ctx, args, incomplete: str):
         a list of autocompletion strings
     """
     try:
-        repo = ctx.obj or Bot()  # take the repo from the ctx or init a new one
-        commesse = repo.commesse
+        bot = ctx.obj or _create_bot()  # take the bot from the ctx or init a new one
+        commesse = bot.commesse
         commesse_compl = map(lambda c: merge_id_desc(c["jobId"], c["description"]), commesse)
         i = incomplete.lower()
         return [c for c in commesse_compl if i in c.lower()]
@@ -43,9 +57,9 @@ def get_attivita_compl(ctx, args, incomplete: str):
         a list of autocompletion strings
     """
     try:
-        repo = ctx.obj or Bot()
-        job_id = id_from_desc(args[-1])
-        activities = repo.activities(job_id)
+        bot = ctx.obj or _create_bot()
+        job_id = unmerge_id_desc(args[-1])[0]
+        activities = bot.activities(job_id)
         i = incomplete.lower()
         return [
             merge_id_desc(a["taskId"], a["description"])
@@ -80,7 +94,7 @@ def office_prompt() -> str:
     """
     Returns the prompt for asking the chosen office highlighting the default one
     """
-    default_office = envorconfig(OFFICE_ENV_VAR, ("rapp", "office"))
+    default_office = get_default(['rapp', 'add', 'sede~soft'])
     if default_office is not None:
         matching_offices_idxs = [
             i for i, o in enumerate(offices_choices) if o.lower().startswith(default_office.lower())
@@ -152,7 +166,7 @@ def _yesterday() -> datetime.datetime:
     return datetime.datetime.now() - datetime.timedelta(days=1)
 
 
-@click.command(help="Aggiungi un nuovo rapportino", cls=CredsCommand)
+@click.command(help="Aggiungi un nuovo rapportino")
 # the first argument is the commessa
 @click.argument("commessa", type=click.STRING, autocompletion=get_commesse_compl)
 # the second argument is the activity for the given commessa
@@ -200,7 +214,7 @@ def _yesterday() -> datetime.datetime:
     "--sede",
     type=click.STRING,
     prompt=office_prompt(),
-    default=envorconfig(OFFICE_ENV_VAR, ("rapp", "office")),
+    default=get_default(['rapp', 'add', 'sede~soft']),
     callback=validate_office,
     help="Indica la sede in cui hai svolto l'attività",
 )
@@ -212,25 +226,21 @@ def _yesterday() -> datetime.datetime:
 @click.option("--prepagata/--no-prepagata", default=None, help="l'attività è prepagata")
 # whether the flag straordinaio should be inserted
 @click.option("--straordinario/--no-straordinario", default=False, help="è uno straordinario")
-@click.pass_obj
+@click.pass_context
 def add(
-    repo,
-    username,
-    password,
-    commessa,
-    attivita,
-    data: datetime.datetime,
-    ore,
-    sede,
-    descrizione,
-    note,
-    trasferta,
-    fatturare,
-    prepagata,
-    straordinario,
+        ctx,
+        commessa,
+        attivita,
+        data: datetime.datetime,
+        ore,
+        sede,
+        descrizione,
+        note,
+        trasferta,
+        fatturare,
+        prepagata,
+        straordinario,
 ):
-    # Creare Bot for interacting with BOT APIs
-    repo = Bot(username, password)
     # parse inputed time
     ore, minuti = parse_ore_minuti(ore)
     # sanitize inputed date setting timezone and getting the right timestamp
@@ -239,11 +249,11 @@ def add(
         data = data.replace(year=datetime.datetime.now().year)
     date = int(data.timestamp()) * 1000
     # get office_id from sede
-    office_id = id_from_desc(sede)
+    office_id = unmerge_id_desc(sede)[0]
 
     # get the the job description from the job_id
-    job_id = id_from_desc(commessa)
-    full_commessa: Commessa = repo.get_commessa(job_id)
+    job_id = unmerge_id_desc(commessa)[0]
+    full_commessa: Commessa = ctx.obj.get_commessa(job_id)
 
     # create the Rapportino to store default and inputed data
     r = Rapportino(
@@ -251,10 +261,10 @@ def add(
         commessa=full_commessa["description"],
         jobId=int(job_id),
         attivita=attivita,
-        jobTaskId=int(id_from_desc(attivita)),
+        jobTaskId=int(unmerge_id_desc(attivita)[0]),
         date=date,
         note=note,
-        tecnicoId=int(repo.res_id),
+        tecnicoId=int(ctx.obj.res_id),
         customerId=int(full_commessa["customerId"]),
         customerName=full_commessa["customerId"],
         description=descrizione,
@@ -294,7 +304,7 @@ def add(
             elif value.lower() in ["y", "\n"]:
                 confirmed = True
 
-        repo.add_rapportino(
+        ctx.obj.add_rapportino(
             job_id=r["jobId"],
             task_id=r["jobTaskId"],
             hours=r["quantityHours"],
@@ -309,7 +319,7 @@ def add(
             flag_extrahour=r["flagExtraHour"],
         )
         # stampa il risultato
-        click.secho(f" 🐷 Salvato! 💪", fg="magenta")
+        click.secho(" 🐷 Salvato il rapportino! 💪", fg="magenta")
     except click.Abort:
         click.secho(f" 🐷 Ok, non procedo!", fg="magenta")
     except Exception as error:

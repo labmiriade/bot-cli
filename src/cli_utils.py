@@ -4,25 +4,58 @@ argomenti da linea di comando.
 
 Ad esempio per trovare gli argomenti di default.
 """
+import copy
 import os
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Dict, List, Any, Optional
 
-import click
 import toml
 
-from src import USERNAME_ENV_VAR, PASSWORD_ENV_VAR
-
 CONFIG_FILE = os.path.join(Path.home(), ".mirbot")
+ENV_VAR_PREFIX = "BOT_"
+CONFIG_COMMENT = """# Questo file contiene le configurazioni dei default della CLI di BOT
+#
+# Puoi mettere un valore di default per tutti i comandi
+# basta che il file sia un file toml ben formattato
+# e i nomi delle chiavi siano gli stessi dei sottocomandi e delle opzioni.
+# Ad esempio per impostare il default:
+#    bot rapp ls --count 3
+# Devi compilare il file toml con:
+#    [rapp]
+#    [rapp.ls]
+#    count = 3
+#
+# Quando c'è un valore di default quello viene utilizzato saltando eventuali
+# prompt.
+# Ad esempio se aggiungo:
+#    [rapp]
+#    [rapp.add]
+#    sede = 2
+# Non comparirà il prompt che chiede quale sia la sede selezionata (e verrà
+# usato il default).
+# Se si vuole che il valore sia solo evidenziato si può utilizzare un "soft"
+# default (che si ottiene indicando `~soft` come suffisso dell'opzione).
+# Ad esempio se si imposta:
+#    [rapp]
+#    [rapp.add]
+#    "sede~soft" = 2
+# la sede "2" verrà pre-selezionata e si potrà premere invio per evidenziarla.
 
-try:
-    with open(CONFIG_FILE, "r") as f:
-        config = toml.load(f) or {}
-except FileNotFoundError:
-    config = {}
+"""
+
+
+def stored_creds(location: str = CONFIG_FILE) -> Tuple[Optional[str], Optional[str]]:
+    """
+    Returns the credentials looking for env vars and in the config file
+    """
+    creds = get_stored_config(location).get("creds", {})
+    username = os.environ.get("BOT_USERNAME") or creds.get("username")
+    password = os.environ.get("BOT_PASSWORD") or creds.get("password")
+    return username, password
 
 
 def envorconfig(env: str, keys: Tuple):
+    return
     aux = os.environ.get(env)
     if aux is not None:
         return aux
@@ -36,63 +69,97 @@ def envorconfig(env: str, keys: Tuple):
     return aux
 
 
-class CredsCommand(click.core.Command):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        username_help = f"""
-        Usa il file di configurazione (bot config) oppure la variabile
-        d'ambiente {USERNAME_ENV_VAR} per impostare il tuo username
-        (che coincide con l'email aziendale).
-        """
-        username_help = "the username to use"
-        password_help = f"""
-        Usa il file di configurazione (bot config) oppure la variabile
-        d'ambiente {PASSWORD_ENV_VAR} per impostare la tua password
-        (se non sai quale sia clicca su "ho dimenticato la password"
-        nella homepage di bot).
-        """
-        password_help = "the password to use"
-        opt_0 = click.core.Option(
-            ("--username",),
-            default=envorconfig(USERNAME_ENV_VAR, ("creds", "username")),
-            required=True,
-            help=username_help,
-        )
-        opt_1 = click.core.Option(
-            ("--password",),
-            default=envorconfig(PASSWORD_ENV_VAR, ("creds", "password")),
-            required=True,
-            help=password_help,
-        )
-        self.params.insert(0, opt_0)
-        self.params.insert(1, opt_1)
+def get_default(
+        path: List[str], location: str = CONFIG_FILE, envvars: Dict[str, str] = os.environ
+) -> Optional[Any]:
+    # look for an env var
+    var_name = ENV_VAR_PREFIX + "_".join(path).upper()
+    aux = envvars.get(var_name)
+    if aux is not None:
+        return aux
+    # look in config file
+    aux = get_stored_config(location)
+    for el in path:
+        if not isinstance(aux, dict):
+            aux = {}
+        aux = aux.get(el)
+    return aux
 
 
-class AliasedGroup(click.Group):
+def put_stored_config(config: Dict, location: str = CONFIG_FILE):
     """
-    A class for a group able to match subcommands even if only a substring is matched
+    Save the configuration to the specified file
+    """
+    # Override the toml config file
+    with open(location, "w") as f:
+        f.write(CONFIG_COMMENT)
+        toml.dump(config, f)
 
+
+def get_stored_config(location: str = CONFIG_FILE) -> Dict:
+    """
+    Read the defaults from a toml file
+    """
+    # create defaults from config file
+    try:
+        with open(location, "r") as f:
+            config = toml.load(f) or {}
+    except FileNotFoundError:
+        config = {}
+    return config
+
+
+def load_default_map(location: str = CONFIG_FILE, envvars: Dict[str, str] = os.environ.items()) -> Dict:
+    """
+    Returns the default map for the CLI
+    The default map holds default values for every parameter
+    """
+    config = get_stored_config(location)
+
+    # override defaults from environment variables
+    for key, value in envvars:
+        path = envvar_to_config_path(key)
+        if value == "":
+            # empty string should unset the value
+            value = None
+        if path is not None:
+            # if the path is not none, merge it!
+            old = copy.deepcopy(config)
+            config = merge(old, path, value)
+
+    return config
+
+
+def merge(config: Dict, path: List[str], value: Any) -> Any:
+    """
+    Replaces the value in a dictionary at the specified path
+    """
+    if len(path) == 0:
+        return value
+    else:
+        key = path[0]
+        old = copy.deepcopy(config.get(key))
+        if not isinstance(old, dict):
+            old = {}
+        config[key] = merge(old, path[1:], value)
+        return config
+
+
+def envvar_to_config_path(key: str) -> Optional[List[str]]:
+    """
+    Given the name of an environment variable returns the path
+    in the config object where it should reside if it is a bot value
     Examples:
-        bot wh -> bot whoami (because there is no other command starting with `wh`)
+        - BOT_RAPP_LS_COUNT becomes ['bot', 'rapp', 'ls', 'count']
+        - BOT_RAPP_ADD_SEDE becomes ['bot', 'rapp', 'add', 'sede']
+        - JAVA_HOME becomes None
     """
-
-    def get_command(self, ctx, cmd_name):
-        """
-        Override get_command to return commands if matching a unique substring (es. rapp for rapportini)
-        Args:
-            ctx ():
-            cmd_name ():
-
-        Returns:
-            the command that matched if it is unique, a fail if it is not unique, None if no command matches
-        """
-        rv = super().get_command(ctx, cmd_name)
-        if rv is not None:
-            return rv
-        matches = [x for x in self.list_commands(ctx) if x.startswith(cmd_name)]
-        if not matches:
-            return None
-        elif len(matches) == 1:
-            return super().get_command(ctx, matches[0])
-        else:
-            ctx.fail("Too many matches: %s" % ", ".join(sorted(matches)))
+    if not key.startswith(ENV_VAR_PREFIX):
+        # the env var is not for bot-cli
+        return None
+    path = key.lower().split("_")
+    if len(path) < 2:
+        # the path is too short as the first item is always
+        # `bot` with the given PREFIX
+        return None
+    return path[1:]

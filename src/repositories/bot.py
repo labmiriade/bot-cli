@@ -12,8 +12,8 @@ from typing import TypedDict, Union, Optional, List
 import requests
 from fcache.cache import FileCache
 
-from . import USERNAME_ENV_VAR, PASSWORD_ENV_VAR
-from .cli_utils import envorconfig
+from src import USERNAME_ENV_VAR, PASSWORD_ENV_VAR
+from src.cli_utils import envorconfig
 
 # the location of the cache dir
 CACHE_DIR = os.path.join(Path.home(), ".mirbot-cache")
@@ -72,9 +72,9 @@ class Rapportino(TypedDict):
 
 
 class Bot(object):
-    def __init__(self, username: Optional[str] = None, password: Optional[str] = None, use_cache: bool = True):
-        self.username = username or envorconfig(USERNAME_ENV_VAR, ("creds", "username"))
-        self.password = password or envorconfig(PASSWORD_ENV_VAR, ("creds", "password"))
+    def __init__(self, username: str, password: str, use_cache: bool = True):
+        self.username = username
+        self.password = password
         self.auth = (self.username, self.password)
         self.use_cache = use_cache
         self.cache = FileCache("mirbot", app_cache_dir=CACHE_DIR, flag="cs")
@@ -185,7 +185,8 @@ class Bot(object):
             "requestBody": request_body,
             "userId": user_id,
         }
-        self.s.post(url, data=payload, auth=self.auth)
+        res = self.s.post(url, data=payload, auth=self.auth)
+        return res.json()
 
     def get_missing(self) -> List[MissingRapportino]:
         params = {
