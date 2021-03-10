@@ -1,45 +1,31 @@
 import os
-from shutil import rmtree
 
 import click
 
-from src.repo import CACHE_DIR
 
-
-@click.group(help="Impostazioni della cli")
-def settings():
-    """
-    The group for holding commands on rapportini
-    """
-    pass
-
-
-@settings.command(help="Rimuove la cache")
-def svuota_cache():
-    """
-    Flush the cache
-    """
-    rmtree(CACHE_DIR)
-    click.secho(f" 🐷 Eliminata tutta la cache! 🗑", fg="magenta")
-
-
-@settings.command(help="Abilita autocompletamento")
-def completamento():
+@click.command(help="Abilita autocompletamento")
+def auto_completamento():
     """
     Helps configuring autocompletions of commands
     """
     current_shell = os.environ.get("SHELL", "").split("/")[-1]
-    if current_shell != "":
-        current_shell = f' (al momento sembra che tu stia usando "{current_shell}")'
+    current_shell_detected = (
+        f' (al momento sembra che tu stia usando "{current_shell}")' if current_shell is not None else ""
+    )
+    print(f"{current_shell=}")
     fst = (
         "\n 🐷 Puoi abilitare l'autocompletamento per aiutarti con i comandi\n"
         "    e soprattutto con le commesse e i task quando inserisci i rapportini.\n"
     )
-    snd = "  Per l'autocompletamento controlla qual è la shell che usi\n" "  e copia il comando nel file indicato.\n"
+    snd = "  Per l'autocompletamento controlla quale shell usi\n  e copia il comando nel file indicato.\n"
 
     def print_instructions(shell: str, file: str, command: str):
-        content = f"  Se usi {click.style(shell, fg='bright_magenta')} aggiungi a '{file}'\n" f"     {command}\n"
-        click.echo(content)
+        highlights = "blue" if shell == current_shell else None
+        ind = " " * 2
+        ttl = f"{ind}Se usi {click.style(shell, fg='bright_magenta')} aggiungi a '{click.style(file, fg=highlights)}'"
+        cmd = f"{ind}   {click.style(command, fg=highlights)}"
+        click.echo(ttl)
+        click.echo(cmd)
 
     instructions = [
         ("bash", "~/.bashrc", 'eval "$(_BOT_COMPLETE=source_bash bot)"'),
