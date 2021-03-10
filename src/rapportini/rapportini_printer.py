@@ -2,7 +2,7 @@ from typing import Optional, List, Callable
 
 import click
 
-from ..repo import Rapportino, DeletedRapportino
+from ..bot import Rapportino, DeletedRapportino
 from ..utils import datefromt
 
 # The offices allowed choices

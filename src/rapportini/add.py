@@ -6,7 +6,7 @@ import click
 from src import OFFICE_ENV_VAR
 from ..cli_utils import envorconfig, CredsCommand
 from .rapportini_printer import offices_choices, full_rapp
-from ..repo import Repo, Commessa, Rapportino
+from ..bot import Bot, Commessa, Rapportino
 from ..utils import merge_id_desc, id_from_desc, parse_ore_minuti
 
 
@@ -22,7 +22,7 @@ def get_commesse_compl(ctx, args, incomplete: str):
         a list of autocompletion strings
     """
     try:
-        repo = ctx.obj or Repo()  # take the repo from the ctx or init a new one
+        repo = ctx.obj or Bot()  # take the repo from the ctx or init a new one
         commesse = repo.commesse
         commesse_compl = map(lambda c: merge_id_desc(c["jobId"], c["description"]), commesse)
         i = incomplete.lower()
@@ -43,7 +43,7 @@ def get_attivita_compl(ctx, args, incomplete: str):
         a list of autocompletion strings
     """
     try:
-        repo = ctx.obj or Repo()
+        repo = ctx.obj or Bot()
         job_id = id_from_desc(args[-1])
         activities = repo.activities(job_id)
         i = incomplete.lower()
@@ -229,8 +229,8 @@ def add(
     prepagata,
     straordinario,
 ):
-    # Creare Repo for interacting with BOT APIs
-    repo = Repo(username, password)
+    # Creare Bot for interacting with BOT APIs
+    repo = Bot(username, password)
     # parse inputed time
     ore, minuti = parse_ore_minuti(ore)
     # sanitize inputed date setting timezone and getting the right timestamp

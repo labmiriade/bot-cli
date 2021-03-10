@@ -2,7 +2,7 @@ from shutil import rmtree
 
 import click
 
-from src.repo import CACHE_DIR
+from src.bot import CACHE_DIR
 
 
 @click.command(help="Rimuove la cache")

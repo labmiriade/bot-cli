@@ -12,8 +12,8 @@ from typing import TypedDict, Union, Optional, List
 import requests
 from fcache.cache import FileCache
 
-from src import USERNAME_ENV_VAR, PASSWORD_ENV_VAR
-from src.cli_utils import envorconfig
+from . import USERNAME_ENV_VAR, PASSWORD_ENV_VAR
+from .cli_utils import envorconfig
 
 # the location of the cache dir
 CACHE_DIR = os.path.join(Path.home(), ".mirbot-cache")
@@ -71,7 +71,7 @@ class Rapportino(TypedDict):
     flagExtraHour: bool
 
 
-class Repo(object):
+class Bot(object):
     def __init__(self, username: Optional[str] = None, password: Optional[str] = None, use_cache: bool = True):
         self.username = username or envorconfig(USERNAME_ENV_VAR, ("creds", "username"))
         self.password = password or envorconfig(PASSWORD_ENV_VAR, ("creds", "password"))
@@ -209,9 +209,8 @@ class Repo(object):
             "rapportinoId": rapportinoId,
         }
         url = f"{self.base_url}/rapportini.rapportino/delete-rapportino"
-        print(f"{url=}")
         res = self.s.post(url, data=params, auth=self.auth)
         aux = res.json()
         if aux == {}:
             aux = None
-        return aux.json()
+        return aux

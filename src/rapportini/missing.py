@@ -3,14 +3,14 @@ from typing import List
 import click
 
 from ..cli_utils import CredsCommand
-from ..repo import Repo, MissingRapportino
+from ..bot import Bot, MissingRapportino
 from ..utils import datefromt
 
 
 @click.command(help="Mostra i raportini mancanti", cls=CredsCommand)
 @click.pass_obj
 def missing(repo, username, password):
-    repo = Repo(username, password)
+    repo = Bot(username, password)
     rapps: List[MissingRapportino] = repo.get_missing()
     if len(rapps) == 0:
         click.secho(" 🐷 Complimenti, hai inserito tutti i rapportini!", fg="magenta")

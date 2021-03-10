@@ -1,7 +1,7 @@
 import click
 
 from src.cli_utils import CredsCommand
-from src.repo import Repo
+from src.bot import Bot
 
 
 @click.command(help="Mostra informazioni sull'utente", cls=CredsCommand)
@@ -15,7 +15,7 @@ def whoami(ctx, username, password):
         password (): The password for the user
     """
     click.echo(f'Ciao {click.style(username, fg="green")}!')
-    repo = Repo(username, password)
+    repo = Bot(username, password)
     user_id, res_id = repo.user_id, repo.res_id
     click.echo(
         f'Il tuo user è {click.style(user_id, fg="yellow")}, '

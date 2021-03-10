@@ -5,7 +5,7 @@ import click
 
 from .rapportini_printer import full_rapp, short_rapp
 from ..cli_utils import CredsCommand
-from ..repo import Repo
+from ..bot import Bot
 
 
 @click.command(help="Mostra i rapportini inseriti", cls=CredsCommand)
@@ -30,7 +30,7 @@ from ..repo import Repo
 )
 @click.pass_obj
 def ls(repo, username, password, data: datetime.datetime, count: Optional[int], fmt):
-    repo = Repo(username, password)
+    repo = Bot(username, password)
     if data is not None:
         data = data.replace(tzinfo=datetime.timezone.utc)
         count = count or 1
