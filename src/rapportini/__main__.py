@@ -7,7 +7,7 @@ from .rm import rm
 from ..cli_utils import AliasedGroup
 
 
-@click.group(help='Operazioni sui rapportini', cls=AliasedGroup)
+@click.group(help="Operazioni sui rapportini", cls=AliasedGroup)
 def rapp():
     """
     The group for holding commands on rapportini

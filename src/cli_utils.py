@@ -13,10 +13,10 @@ import toml
 
 from src import USERNAME_ENV_VAR, PASSWORD_ENV_VAR
 
-CONFIG_FILE = os.path.join(Path.home(), '.mirbot')
+CONFIG_FILE = os.path.join(Path.home(), ".mirbot")
 
 try:
-    with open(CONFIG_FILE, 'r') as f:
+    with open(CONFIG_FILE, "r") as f:
         config = toml.load(f) or {}
 except FileNotFoundError:
     config = {}
@@ -44,18 +44,26 @@ class CredsCommand(click.core.Command):
         d'ambiente {USERNAME_ENV_VAR} per impostare il tuo username
         (che coincide con l'email aziendale).
         """
-        username_help = 'the username to use'
+        username_help = "the username to use"
         password_help = f"""
         Usa il file di configurazione (bot config) oppure la variabile
         d'ambiente {PASSWORD_ENV_VAR} per impostare la tua password
         (se non sai quale sia clicca su "ho dimenticato la password"
         nella homepage di bot).
         """
-        password_help = 'the password to use'
-        opt_0 = click.core.Option(('--username',), default=envorconfig(USERNAME_ENV_VAR, ('creds', 'username')),
-                                  required=True, help=username_help)
-        opt_1 = click.core.Option(('--password',), default=envorconfig(PASSWORD_ENV_VAR, ('creds', 'password')),
-                                  required=True, help=password_help)
+        password_help = "the password to use"
+        opt_0 = click.core.Option(
+            ("--username",),
+            default=envorconfig(USERNAME_ENV_VAR, ("creds", "username")),
+            required=True,
+            help=username_help,
+        )
+        opt_1 = click.core.Option(
+            ("--password",),
+            default=envorconfig(PASSWORD_ENV_VAR, ("creds", "password")),
+            required=True,
+            help=password_help,
+        )
         self.params.insert(0, opt_0)
         self.params.insert(1, opt_1)
 
@@ -87,4 +95,4 @@ class AliasedGroup(click.Group):
         elif len(matches) == 1:
             return super().get_command(ctx, matches[0])
         else:
-            ctx.fail('Too many matches: %s' % ', '.join(sorted(matches)))
+            ctx.fail("Too many matches: %s" % ", ".join(sorted(matches)))

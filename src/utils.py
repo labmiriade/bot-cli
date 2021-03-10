@@ -40,7 +40,7 @@ def id_from_desc(desc: str) -> str:
     Returns:
         a str with the id
     """
-    return str(desc.strip()).split('_')[0]
+    return str(desc.strip()).split("_")[0]
 
 
 def parse_ore_minuti(s: str) -> Tuple[int, int]:
@@ -57,8 +57,8 @@ def parse_ore_minuti(s: str) -> Tuple[int, int]:
     s = s.strip()
 
     # detect which format is used
-    if ':' in s:  # hh:mm
-        ss = s.split(':')
+    if ":" in s:  # hh:mm
+        ss = s.split(":")
         h = int(ss[0])
         m = int(ss[1]) if len(ss) > 1 else 0
     else:  # parse hour only (i.e. 3 or 3.5)
