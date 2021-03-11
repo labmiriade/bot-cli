@@ -3,7 +3,7 @@
 name: pep8-check
 on: [pull_request]
 jobs:
-  black-check:
+  flake8-check:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Python 3.8
