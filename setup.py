@@ -1,9 +1,10 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name="bot",
     version="0.1",
-    py_modules=["bot-cli"],
+    packages=find_packages(),
+    include_package_data=True,
     install_requires=[
         "click==7.1.2",
         "requests==2.25.1",
