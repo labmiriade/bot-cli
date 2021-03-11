@@ -66,12 +66,12 @@ def ls(repo, data: datetime.datetime, count: Optional[int], fmt: str):
             printer(r)
             # print the separator among rapportini
             if i < len(rapportini) - 1 and fmt == "full":
-                click.secho(f"    ----------------------------------------")
+                click.secho("    ----------------------------------------")
         if count > 0:
             # if there are more dates, print a separator
             if fmt == "full":
-                click.secho(f"============================================")
+                click.secho("============================================")
             else:
-                click.secho(f"--------------------------------------------")
+                click.secho("--------------------------------------------")
         # decrease the date by one day
         data = data - datetime.timedelta(days=1)

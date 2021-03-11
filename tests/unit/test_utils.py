@@ -4,7 +4,7 @@ from typing import Tuple, Union
 import click
 import pytest
 
-from src.utils import *
+from src.utils import datefromt, tfromdate, merge_id_desc, unmerge_id_desc, parse_ore_minuti
 
 
 @pytest.mark.parametrize(

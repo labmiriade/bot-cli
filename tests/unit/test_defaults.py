@@ -1,6 +1,11 @@
+import os
+from typing import Dict, List, Any
+
 import pytest
 
-from src.cli_utils import *
+from src.cli_utils import merge, envvar_to_config_path, load_default_map
+
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 @pytest.mark.parametrize(
@@ -24,8 +29,8 @@ def test_merge(config: Dict, path: List[str], value: Any, expected: Dict):
 @pytest.mark.parametrize(
     ("given", "expected"),
     [
-        ("BOT_RAPP_LS_COUNT", ["bot", "rapp", "ls", "count"]),
-        ("BOT_RAPP_ADD_SEDE", ["bot", "rapp", "add", "sede"]),
+        ("BOT_RAPP_LS_COUNT", ["rapp", "ls", "count"]),
+        ("BOT_RAPP_ADD_SEDE", ["rapp", "add", "sede"]),
     ],
 )
 def test_envvar_to_config_path(given: str, expected: List[str]):
@@ -38,13 +43,12 @@ def test_envvar_to_config_path(given: str, expected: List[str]):
 @pytest.mark.parametrize(
     ("location", "envvars", "expected"),
     [
-        ("./sample_config", {}, {"rapp": {"ls": {"count": 3}}}),
-        ("./sample_config", {}, {"rapp": {"ls": {"count": 3, "foo": "4"}}}),
-        ("./sample_config", {}, {"rapp": {"ls": {"count": "foo"}}}),
+        (os.path.join(THIS_DIR, "sample_config.toml"), {}, {"rapp": {"ls": {"count": 3}}}),
+        (os.path.join(THIS_DIR, "sample_config.toml"), {}, {"rapp": {"ls": {"count": 3, "foo": "4"}}}),
+        (os.path.join(THIS_DIR, "sample_config.toml"), {}, {"rapp": {"ls": {"count": "foo"}}}),
     ],
 )
 def test_load_default_map(location: str, envvars: Dict[str, str], expected: Dict):
-    location = "./sample_config.toml"
     config = load_default_map(location, {})
     expected = {
         "rapp": {

@@ -12,12 +12,14 @@ def auto_completamento():
     current_shell_detected = (
         f' (al momento sembra che tu stia usando "{current_shell}")' if current_shell is not None else ""
     )
-    print(f"{current_shell=}")
     fst = (
         "\n 🐷 Puoi abilitare l'autocompletamento per aiutarti con i comandi\n"
         "    e soprattutto con le commesse e i task quando inserisci i rapportini.\n"
     )
-    snd = "  Per l'autocompletamento controlla quale shell usi\n  e copia il comando nel file indicato.\n"
+    snd = (
+        f"  Per l'autocompletamento controlla quale shell usi{current_shell_detected}\n"
+        f"  e copia il comando nel file indicato.\n"
+    )
 
     def print_instructions(shell: str, file: str, command: str):
         highlights = "blue" if shell == current_shell else None
@@ -33,7 +35,7 @@ def auto_completamento():
         ("fish", "~/.config/fish/completions/bot.fish", "eval (env _BOT_COMPLETE=source_fish bot)"),
     ]
 
-    lst = f" 🐷 Se hai problemi a far funzionare l'autocompletamento fammi sapere!"
+    lst = " 🐷 Se hai problemi a far funzionare l'autocompletamento fammi sapere!"
 
     click.secho(fst, fg="magenta")
     click.secho(snd)

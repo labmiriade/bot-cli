@@ -12,9 +12,6 @@ from typing import TypedDict, Union, Optional, List
 import requests
 from fcache.cache import FileCache
 
-from src import USERNAME_ENV_VAR, PASSWORD_ENV_VAR
-from src.cli_utils import envorconfig
-
 # the location of the cache dir
 CACHE_DIR = os.path.join(Path.home(), ".mirbot-cache")
 

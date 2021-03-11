@@ -1,5 +1,3 @@
-import os
-
 import click
 
 from .add import add
@@ -7,7 +5,7 @@ from .ls import ls
 from .missing import missing
 from .rm import rm
 from ..cli_utils import stored_creds
-from ..click.aliased_group import AliasedGroup
+from ..click_utils.aliased_group import AliasedGroup
 from ..repositories.bot import Bot
 
 
