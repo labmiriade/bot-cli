@@ -7,6 +7,7 @@ from src.cli_utils import merge, envvar_to_config_path, load_default_map
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
 @pytest.mark.parametrize(
     ("config", "path", "value", "expected"),
     [
@@ -42,9 +43,9 @@ def test_envvar_to_config_path(given: str, expected: List[str]):
 @pytest.mark.parametrize(
     ("location", "envvars", "expected"),
     [
-        (os.path.join(THIS_DIR, 'sample_config.toml'), {}, {"rapp": {"ls": {"count": 3}}}),
-        (os.path.join(THIS_DIR, 'sample_config.toml'), {}, {"rapp": {"ls": {"count": 3, "foo": "4"}}}),
-        (os.path.join(THIS_DIR, 'sample_config.toml'), {}, {"rapp": {"ls": {"count": "foo"}}}),
+        (os.path.join(THIS_DIR, "sample_config.toml"), {}, {"rapp": {"ls": {"count": 3}}}),
+        (os.path.join(THIS_DIR, "sample_config.toml"), {}, {"rapp": {"ls": {"count": 3, "foo": "4"}}}),
+        (os.path.join(THIS_DIR, "sample_config.toml"), {}, {"rapp": {"ls": {"count": "foo"}}}),
     ],
 )
 def test_load_default_map(location: str, envvars: Dict[str, str], expected: Dict):
