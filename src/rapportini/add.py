@@ -94,7 +94,7 @@ def office_prompt() -> str:
     """
     Returns the prompt for asking the chosen office highlighting the default one
     """
-    default_office = get_default(['rapp', 'add', 'sede~soft'])
+    default_office = get_default(["rapp", "add", "sede~soft"])
     if default_office is not None:
         matching_offices_idxs = [
             i for i, o in enumerate(offices_choices) if o.lower().startswith(default_office.lower())
@@ -214,7 +214,7 @@ def _yesterday() -> datetime.datetime:
     "--sede",
     type=click.STRING,
     prompt=office_prompt(),
-    default=get_default(['rapp', 'add', 'sede~soft']),
+    default=get_default(["rapp", "add", "sede~soft"]),
     callback=validate_office,
     help="Indica la sede in cui hai svolto l'attività",
 )
@@ -228,18 +228,18 @@ def _yesterday() -> datetime.datetime:
 @click.option("--straordinario/--no-straordinario", default=False, help="è uno straordinario")
 @click.pass_context
 def add(
-        ctx,
-        commessa,
-        attivita,
-        data: datetime.datetime,
-        ore,
-        sede,
-        descrizione,
-        note,
-        trasferta,
-        fatturare,
-        prepagata,
-        straordinario,
+    ctx,
+    commessa,
+    attivita,
+    data: datetime.datetime,
+    ore,
+    sede,
+    descrizione,
+    note,
+    trasferta,
+    fatturare,
+    prepagata,
+    straordinario,
 ):
     # parse inputed time
     ore, minuti = parse_ore_minuti(ore)

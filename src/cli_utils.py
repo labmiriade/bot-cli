@@ -69,9 +69,7 @@ def envorconfig(env: str, keys: Tuple):
     return aux
 
 
-def get_default(
-        path: List[str], location: str = CONFIG_FILE, envvars: Dict[str, str] = os.environ
-) -> Optional[Any]:
+def get_default(path: List[str], location: str = CONFIG_FILE, envvars: Dict[str, str] = os.environ) -> Optional[Any]:
     # look for an env var
     var_name = ENV_VAR_PREFIX + "_".join(path).upper()
     aux = envvars.get(var_name)
