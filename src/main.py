@@ -4,9 +4,9 @@ import click
 
 from .cli_utils import load_default_map
 from .click.aliased_group import AliasedGroup
-from .config import config
-from .rapportini import rapp
-from .settings import settings
+from .config.config import config
+from .rapportini.main import rapp
+from .settings.main import settings
 
 SHORT_HELP_TEXT = """
 Command line tool per interagire con BOT 🐷

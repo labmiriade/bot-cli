@@ -54,21 +54,6 @@ def stored_creds(location: str = CONFIG_FILE) -> Tuple[Optional[str], Optional[s
     return username, password
 
 
-def envorconfig(env: str, keys: Tuple):
-    return
-    aux = os.environ.get(env)
-    if aux is not None:
-        return aux
-    c = config
-    try:
-        for k in keys:
-            c = c[k]
-        aux = c
-    except KeyError:
-        aux = None
-    return aux
-
-
 def get_default(path: List[str], location: str = CONFIG_FILE, envvars: Dict[str, str] = os.environ) -> Optional[Any]:
     # look for an env var
     var_name = ENV_VAR_PREFIX + "_".join(path).upper()

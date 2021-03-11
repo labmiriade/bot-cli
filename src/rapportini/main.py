@@ -1,5 +1,3 @@
-import os
-
 import click
 
 from .add import add

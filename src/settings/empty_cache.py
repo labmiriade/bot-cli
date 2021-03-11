@@ -11,4 +11,4 @@ def svuota_cache():
     Flush the cache
     """
     rmtree(CACHE_DIR)
-    click.secho(f" 🐷 Eliminata tutta la cache! 🗑", fg="magenta")
+    click.secho(" 🐷 Eliminata tutta la cache! 🗑", fg="magenta")

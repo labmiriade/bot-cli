@@ -1,5 +1,4 @@
 import click
-import toml
 
 from src.cli_utils import get_stored_config, put_stored_config
 from src.rapportini.rapportini_printer import offices_choices
@@ -12,7 +11,7 @@ def config():
     """
     # read the current values, to present them as defaults
     current_values = get_stored_config()
-    click.secho(f" 🐷 Ora ti guiderò nell'impostazione delle configurazioni principali\n", fg="magenta")
+    click.secho(" 🐷 Ora ti guiderò nell'impostazione delle configurazioni principali\n", fg="magenta")
 
     # Credentials
     #  update username and password
@@ -42,7 +41,7 @@ def config():
     click.secho("Le sedi sono:", fg="bright_magenta")
     for office in offices_choices:
         click.secho(f"  - {office}", fg="bright_magenta")
-    click.secho(f"Basta indicare il numero della relativa sede", fg="bright_magenta")
+    click.secho("Basta indicare il numero della relativa sede", fg="bright_magenta")
     add["sede~soft"] = click.prompt("  sede", default=add.get("sede~soft"), type=click.STRING)
     if add["sede~soft"].strip() == "":
         add["sede~soft"] = None
@@ -52,4 +51,4 @@ def config():
 
     put_stored_config(current_values)
 
-    click.secho(f" 🐷 Finito! se vuoi modificare il file manualmente, lo trovi in ~/.mirbot", fg="magenta")
+    click.secho(" 🐷 Finito! se vuoi modificare il file manualmente, lo trovi in ~/.mirbot", fg="magenta")

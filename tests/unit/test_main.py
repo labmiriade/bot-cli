@@ -1,6 +1,6 @@
 from click.testing import CliRunner
 
-from src.main import *
+from src.main import cli
 
 
 def test_cli_has_commands():

@@ -35,13 +35,14 @@ def get_commesse_compl(ctx, args, incomplete: str):
     Returns:
         a list of autocompletion strings
     """
+    # noinspection PyStatementEffect
     try:
         bot = ctx.obj or _create_bot()  # take the bot from the ctx or init a new one
         commesse = bot.commesse
         commesse_compl = map(lambda c: merge_id_desc(c["jobId"], c["description"]), commesse)
         i = incomplete.lower()
         return [c for c in commesse_compl if i in c.lower()]
-    except:
+    except:  # noqa: E722 bare exeption in autocomplete are allowed
         return []
 
 
@@ -56,6 +57,7 @@ def get_attivita_compl(ctx, args, incomplete: str):
     Returns:
         a list of autocompletion strings
     """
+    # noinspection PyBroadException
     try:
         bot = ctx.obj or _create_bot()
         job_id = unmerge_id_desc(args[-1])[0]
@@ -66,7 +68,7 @@ def get_attivita_compl(ctx, args, incomplete: str):
             for a in activities
             if i in a["description"].lower() or i in a["taskId"].lower()
         ]
-    except:
+    except:  # noqa: E722 bare exeption in autocomplete are allowed
         return []
 
 
@@ -321,7 +323,7 @@ def add(
         # stampa il risultato
         click.secho(" 🐷 Salvato il rapportino! 💪", fg="magenta")
     except click.Abort:
-        click.secho(f" 🐷 Ok, non procedo!", fg="magenta")
+        click.secho(" 🐷 Ok, non procedo!", fg="magenta")
     except Exception as error:
         click.secho(f" 🐷 Errore: {error=}", fg="bright_red")
         exit(1)

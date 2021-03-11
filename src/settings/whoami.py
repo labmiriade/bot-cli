@@ -1,20 +1,32 @@
 import click
 
+from ..cli_utils import stored_creds
 from ..repositories.bot import Bot
+
+CREDENTIALS_NOT_SET_1 = """
+ 🐷 Devi configurare sia username (email) che password per poter
+    usare questa funzione. Utilizza il comando:
+"""
+CREDENTIALS_NOT_SET_2 = "        bot config"
+CREDENTIALS_NOT_SET_3 = """
+    per configuare un file di configurazione, o imposta le variabili
+    BOT_USERNAME e BOT_PASSWORD.
+"""
 
 
 @click.command(help="Mostra informazioni sull'utente")
-@click.pass_context
-def whoami(ctx, username, password):
+def whoami():
     """
     This command is useful for debugging problems related to the current user
-    Args:
-        ctx ():
-        username (): The username to use
-        password (): The password for the user
     """
+    username, password = stored_creds()
+    if username is None or password is None:
+        click.secho(CREDENTIALS_NOT_SET_1, fg="red")
+        click.secho(CREDENTIALS_NOT_SET_2, fg="cyan")
+        click.secho(CREDENTIALS_NOT_SET_3, fg="red")
+        exit(1)
+    repo = Bot(username=username, password=password)
     click.echo(f'Ciao {click.style(username, fg="green")}!')
-    repo = Bot(username, password)
     user_id, res_id = repo.user_id, repo.res_id
     click.echo(
         f'Il tuo user è {click.style(user_id, fg="yellow")}, '
