@@ -1,0 +1,12 @@
+tasks:
+  - init: >
+      pyenv install 3.8.8 --skip-existing &&
+      pyenv global 3.8.8 &&
+      pyenv local 3.8.8 &&
+      pip install -r ./requirements.txt &&
+      pip install --editable .
+    command: pytest
+
+vscode:
+  extensions:
+    - ms-python.python@2020.10.332292344:5ctthQ25Qni5/aAuOIUTYQ==
