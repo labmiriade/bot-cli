@@ -44,13 +44,15 @@ CONFIG_COMMENT = """# Questo file contiene le configurazioni dei default della C
 """
 
 
-def stored_creds(location: str = CONFIG_FILE) -> Tuple[Optional[str], Optional[str]]:
+def stored_creds(
+    location: str = CONFIG_FILE, envvars: Dict[str, str] = os.environ
+) -> Tuple[Optional[str], Optional[str]]:
     """
     Returns the credentials looking for env vars and in the config file
     """
     creds = get_stored_config(location).get("creds", {})
-    username = os.environ.get("BOT_USERNAME") or creds.get("username")
-    password = os.environ.get("BOT_PASSWORD") or creds.get("password")
+    username = envvars.get("BOT_USERNAME") or creds.get("username")
+    password = envvars.get("BOT_PASSWORD") or creds.get("password")
     return username, password
 
 

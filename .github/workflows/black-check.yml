@@ -1,10 +1,11 @@
 # Check if the code is formatted with black
 
-name: black-check
+name: Black check
 on: [pull_request]
 jobs:
   black-check:
     runs-on: ubuntu-latest
+    timeout-minutes: 3
     steps:
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
