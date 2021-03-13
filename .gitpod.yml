@@ -2,9 +2,9 @@ tasks:
   - init: >
       pyenv install 3.8.8 --skip-existing &&
       pyenv local 3.8.8 &&
-      pip install -r ./requirements.txt
-    command: 
-      pytest
+      pip install -r ./requirements.txt &&
+      pip install --editable .
+    command: pytest
 
 vscode:
   extensions:
