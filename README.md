@@ -2,6 +2,8 @@
 
 A command line interface for interacting with the beloved 🐷 BOT.
 
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/labmiriade/bot-cli)
+
 ## Installation
 
 ### 0. Check for python
