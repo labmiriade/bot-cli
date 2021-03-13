@@ -1,6 +1,6 @@
 # Check if the code is pep8 compliant
 
-name: pep8-check
+name: pep8 check
 on: [pull_request]
 jobs:
   flake8-check:

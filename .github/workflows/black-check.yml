@@ -1,6 +1,6 @@
 # Check if the code is formatted with black
 
-name: black-check
+name: Black check
 on: [pull_request]
 jobs:
   black-check:
