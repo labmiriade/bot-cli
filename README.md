@@ -1,8 +1,8 @@
 # BOT CLI
 
-A command line interface for interacting with the beloved 🐷 BOT.
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/labmiriade/bot-cli)
 
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/labmiriade/bot-cli)
+A command line interface for interacting with our beloved 🐷 BOT.
 
 ## Installation
 
@@ -26,19 +26,19 @@ Instruction varies between shells.
 For **Bash**, add this to ~/.bashrc:
 
 ```sh
-eval "$(_FOO_BAR_COMPLETE=source_bash foo-bar)"
+eval "$(_BOT_COMPLETE=source_bash bot)"
 ```
 
 For **Zsh**, add this to ~/.zshrc:
 
 ```sh
-eval "$(_FOO_BAR_COMPLETE=source_zsh foo-bar)"
+eval "$(_BOT_COMPLETE=source_zsh bot)"
 ```
 
 For **Fish**, add this to ~/.config/fish/completions/foo-bar.fish:
 
 ```sh
-eval (env _FOO_BAR_COMPLETE=source_fish foo-bar)
+eval (env _BOT_COMPLETE=source_fish bot)
 ```
 
 ## Getting Started
@@ -48,3 +48,9 @@ Per iniziare digita `bot config` e inserisci il tuo username e la tua password.
 ### Common Commands
 
 I comandi più comuni sono quelli in `bot rapp`, come **add**, **ls**, **missing**.
+
+## Contribuire
+
+Sarebbe fantastico se volessi contribuire con l'introduzione di nuove feature o sistemare qualche problema ❤️.
+Leggi [CONTRIBUTING.md](/CONTRIBUTING.md) per ulteriori informazioni su come fare.
+
