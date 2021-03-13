@@ -5,6 +5,7 @@ on: [pull_request]
 jobs:
   flake8-check:
     runs-on: ubuntu-latest
+    timeout-minutes: 3
     steps:
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
