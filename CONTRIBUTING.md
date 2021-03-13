@@ -1,5 +1,7 @@
 # Contributing
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/labmiriade/bot-cli)
+
 Grazie per voler contribuire alla BOT CLI 🐷 💪🏽.
 
 ## Pull Request Process
@@ -52,12 +54,18 @@ formattare il codice, verrà verificato in sede di PR, non preoccuparti._
 
 ## Configurazione IDE
 
+Se vuoi iniziare a programmare senza dover configurare un ambiente locale puoi utilizzare il tasto
+[Open in Gitpod](https://gitpod.io/#https://github.com/labmiriade/bot-cli) per lanciare un ambiente virtuale
+(Visual Studio Code) in cloud. _Il piano gratuito prevede 50 ore di utilizzo al mese per i progetti open source 😉_
+
+Visual Studio Code sarà già configurato al meglio e ti resta solo da lanciare `pytest` nel terminale in basso
+per vedere che tutto funzioni. Puoi usare `bot config` e inserire le tue credenziali per testare il comando.
+
 Per lo sviluppo devi installare tutte le dipendenze che si trovano in _requirements.txt_ con `pip install -r requirements.txt`.
 Ti consiglio di farlo solo **dopo** aver creato e attivato un ambiente virtuale dove isolare le dipendenze per questo progetto:
 
 - **Creare il venv** da fare una sola volta `python3 -m venv venv`: creerà una cartella _venv_ in cui verranno salvate tutte le
 dipendenze del progetto.
 
-- **Attiva il venv** quando apri una shell (se non lo fa in automatico l'IDE) devi attivare l'ambiente virtuale che hai creato
+- **Attivare il venv** quando apri una shell (se non lo fa in automatico l'IDE) devi attivare l'ambiente virtuale che hai creato
 per usare le dipendenze lì salvate. Si fa con: `source venv/bin/activate` (se vuoi disattivarlo chiudi la shell o esegui `deactivate`).
-
