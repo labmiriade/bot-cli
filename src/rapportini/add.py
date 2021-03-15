@@ -246,6 +246,8 @@ def add(
     # parse inputed time
     ore, minuti = parse_ore_minuti(ore)
     # sanitize inputed date setting timezone and getting the right timestamp
+    if isinstance(data, str):
+        data = validate_date(object, [], data)
     data = data.replace(tzinfo=datetime.timezone.utc)
     if data.year < 2000:
         data = data.replace(year=datetime.datetime.now().year)
