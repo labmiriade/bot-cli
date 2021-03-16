@@ -1,7 +1,7 @@
 import click
 
-from src.cli_utils import get_stored_config, put_stored_config
-from src.rapportini.rapportini_printer import offices_choices
+from ..cli_utils import get_stored_config, put_stored_config
+from ..rapportini.rapportini_printer import offices_choices
 
 
 @click.command(help="Configura BOT nel terminale")
