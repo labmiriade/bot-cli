@@ -11,7 +11,8 @@ from typing import Tuple, Dict, List, Any, Optional
 
 import toml
 
-CONFIG_FILE = os.path.join(Path.home(), ".mirbot")
+MIRBOT_FOLDER = os.path.join(Path.home(), ".mirbot")
+CONFIG_FILE = os.path.join(MIRBOT_FOLDER, "config")
 ENV_VAR_PREFIX = "BOT_"
 CONFIG_COMMENT = """# Questo file contiene le configurazioni dei default della CLI di BOT
 #
@@ -76,6 +77,7 @@ def put_stored_config(config: Dict, location: str = CONFIG_FILE):
     Save the configuration to the specified file
     """
     # Override the toml config file
+    Path(MIRBOT_FOLDER).mkdir(parents=True, exist_ok=True)
     with open(location, "w") as f:
         f.write(CONFIG_COMMENT)
         toml.dump(config, f)
@@ -89,7 +91,7 @@ def get_stored_config(location: str = CONFIG_FILE) -> Dict:
     try:
         with open(location, "r") as f:
             config = toml.load(f) or {}
-    except FileNotFoundError:
+    except (FileNotFoundError, NotADirectoryError):
         config = {}
     return config
 

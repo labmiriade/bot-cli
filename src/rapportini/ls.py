@@ -15,7 +15,11 @@ from .rapportini_printer import full_rapp, short_rapp
     help="La data per cui va inserito il rapportino",
 )
 @click.option(
-    "-c", "--count", type=click.IntRange(1, 14, clamp=False), help="Quanti giorni mostrare", show_default=False
+    "-c",
+    "--count",
+    type=click.IntRange(1, 14, clamp=False),
+    help="Quanti giorni mostrare",
+    show_default=False,
 )
 @click.option(
     "-f",
