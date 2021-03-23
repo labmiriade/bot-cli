@@ -25,8 +25,20 @@ def config():
     click.echo("")  # add a newline char
     click.secho("Inserisci la tua password, se non la conosci perché entri", fg="cyan")
     click.secho('sempre con Google clicca su "password dimenticata" in homepage', fg="cyan")
-    creds["password"] = click.prompt("  password", default=creds.get("password"), hide_input=True, type=click.STRING)
+
+    # get the old password (if any)
+    saved_password = creds.get("password")
+    # hide the password if exists
+    redacted_password = "****" if saved_password is not None else None
+    # get the new password
+    new_password = click.prompt("  password", default=redacted_password, hide_input=True, type=click.STRING)
+    # if the new password is equal to the redacted characters, replace with the old one
+    if new_password == redacted_password:
+        new_password = saved_password
+    # save the new password
+    creds["password"] = new_password
     click.echo("")  # add a newline char
+
     # if the user enters a space, remove the associated value in config
     if creds["username"].strip() == "":
         creds["username"] = None
