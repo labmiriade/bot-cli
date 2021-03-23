@@ -27,9 +27,9 @@ def config():
     click.secho('sempre con Google clicca su "password dimenticata" in homepage', fg="cyan")
 
     # get the old password (if any)
-    saved_password = creds.get('password')
+    saved_password = creds.get("password")
     # hide the password if exists
-    redacted_password = '****' if saved_password is not None else None
+    redacted_password = "****" if saved_password is not None else None
     # get the new password
     new_password = click.prompt("  password", default=redacted_password, hide_input=True, type=click.STRING)
     # if the new password is equal to the redacted characters, replace with the old one
