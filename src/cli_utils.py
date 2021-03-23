@@ -11,6 +11,7 @@ from typing import Tuple, Dict, List, Any, Optional
 
 import toml
 
+OLD_CONFIG_FILE = os.path.join(Path.home(), ".mirbot")
 MIRBOT_FOLDER = os.path.join(Path.home(), ".mirbot")
 CONFIG_FILE = os.path.join(MIRBOT_FOLDER, "config")
 ENV_VAR_PREFIX = "BOT_"
@@ -43,6 +44,20 @@ CONFIG_COMMENT = """# Questo file contiene le configurazioni dei default della C
 # la sede "2" verrà pre-selezionata e si potrà premere invio per evidenziarla.
 
 """
+
+
+def eventually_migrate_config():
+    """
+    This function is called to migrate config from previous versions of the config file
+    """
+    if os.path.isdir(MIRBOT_FOLDER):
+        return
+    # check if ~/.mirbot is a file and should be moved to the new location
+    if os.path.isfile(OLD_CONFIG_FILE):
+        tmp_file = OLD_CONFIG_FILE + ".bak"
+        os.rename(OLD_CONFIG_FILE, tmp_file)
+        os.mkdir(MIRBOT_FOLDER)
+        os.rename(tmp_file, CONFIG_FILE)
 
 
 def stored_creds(
@@ -89,6 +104,7 @@ def get_stored_config(location: str = CONFIG_FILE) -> Dict:
     """
     # create defaults from config file
     try:
+        eventually_migrate_config()
         with open(location, "r") as f:
             config = toml.load(f) or {}
     except (FileNotFoundError, NotADirectoryError):
