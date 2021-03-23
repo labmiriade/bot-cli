@@ -51,6 +51,14 @@ del progetto. _Se ti dimentichi di formattare il codice, verrà verificato in se
 * Per evitare errori, Python deve soddisfare i requisiti di [pep8](https://www.python.org/dev/peps/pep-0008/), questo viene controllato con
 **flake8**, puoi controllare che il codice soddisfi i requisiti con `flake8 src tests` dalla home del progetto. _Se ti dimentichi di
 formattare il codice, verrà verificato in sede di PR, non preoccuparti._
+  
+## Poetry
+
+Per la gestione delle dipendenze e delle build si utilizza [poetry](https://python-poetry.org/docs/#installation).
+
+Per prima cosa installalo nel tuo computer (non serve se usi gitpod.io).
+Poi potrai installare le dipendeze con `poetry install`, se vuoi lanciare dei comandi da dipendenze installate nel progetto
+(ad esempio _pytest_) puoi usare `poetry run pytest` oppure aprire una shell in cui è caricato il virtual env con `poetry shell`.
 
 ## Configurazione IDE
 
