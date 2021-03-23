@@ -1,7 +1,8 @@
 import click
 
-from src.cli_utils import get_stored_config, put_stored_config
-from src.rapportini.rapportini_printer import offices_choices
+from ..cli_utils import get_stored_config, put_stored_config
+from ..rapportini.rapportini_printer import offices_choices
+from ..repositories.google import authorize_google
 
 
 @click.command(help="Configura BOT nel terminale")
@@ -11,7 +12,10 @@ def config():
     """
     # read the current values, to present them as defaults
     current_values = get_stored_config()
-    click.secho(" 🐷 Ora ti guiderò nell'impostazione delle configurazioni principali\n", fg="magenta")
+    click.secho(
+        " 🐷 Ora ti guiderò nell'impostazione delle configurazioni principali\n",
+        fg="magenta",
+    )
 
     # Credentials
     #  update username and password
@@ -51,4 +55,32 @@ def config():
 
     put_stored_config(current_values)
 
-    click.secho(" 🐷 Finito! se vuoi modificare il file manualmente, lo trovi in ~/.mirbot", fg="magenta")
+    # Google Setup
+    value = None
+    while value not in {"y", "n"}:
+        click.secho(
+            " 🐷 Vuoi aggiornare le credenziali di Google? (per visualizzare eventi a calendario) [y/n]: ",
+            fg="magenta",
+            nl=False,
+        )
+        value = click.getchar(echo=True)
+    click.echo("")
+    if value == "y":
+        _setup_google()
+
+    click.secho(
+        " 🐷 Finito! se vuoi modificare il file manualmente, lo trovi in ~/.mirbot",
+        fg="magenta",
+    )
+
+
+def _setup_google():
+    authorization_prompt_message = click.style(
+        "Utilizza questo url {url} per autorizzare bot a leggere il tuo calendario",
+        fg="magenta",
+    )
+    authorization_code_message = click.style("Copia qui il codice che trovi al link sopra: ", fg="magenta")
+    authorize_google(
+        authorization_prompt_message=authorization_prompt_message,
+        authorization_code_message=authorization_code_message,
+    )

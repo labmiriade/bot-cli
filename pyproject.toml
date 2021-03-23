@@ -1,3 +1,36 @@
+[tool.poetry]
+name = "bot-cli"
+version = "0.1.0"
+description = "The handy CLI for Bot."
+authors = []
+packages = [
+  { include = "src" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.25.1"
+click = "^7.1.2"
+toml = "^0.10.2"
+fcache = "^0.4.7"
+google-api-python-client = "^2.0.2"
+google-auth-httplib2 = "^0.1.0"
+google-auth-oauthlib = "^0.4.3"
+
+[tool.poetry.dev-dependencies]
+black = "^20.8b1"
+pytest = "^6.2.2"
+pytest-cov = "^2.11.1"
+requests-mock = "^1.8.0"
+flake8 = "^3.9.0"
+
+[tool.poetry.scripts]
+bot = "src.main:cli"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.black]
 line-length = 120
 target-version = ['py38']

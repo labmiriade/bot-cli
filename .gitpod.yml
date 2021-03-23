@@ -1,11 +1,13 @@
+image:
+  file: .gitpod.Dockerfile
+
 tasks:
   - init: >
-      pyenv install 3.8.8 --skip-existing &&
       pyenv global 3.8.8 &&
       pyenv local 3.8.8 &&
-      pip install -r ./requirements.txt &&
-      pip install --editable .
-    command: pytest
+      export PIP_USER=false &&
+      poetry install
+    command: poetry shell
 
 vscode:
   extensions:

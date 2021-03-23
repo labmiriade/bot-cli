@@ -13,7 +13,7 @@ import requests
 from fcache.cache import FileCache
 
 # the location of the cache dir
-CACHE_DIR = os.path.join(Path.home(), ".mirbot-cache")
+CACHE_DIR = os.path.join(Path.home(), ".mirbot/cache")
 
 
 class Commessa(TypedDict):
@@ -132,7 +132,9 @@ class Bot(object):
             "userId": self.user_id,
         }
         res_id = self.s.get(
-            f"{self.base_url}/anagrafichecore.tecnico/find-by-user", params=params, auth=self.auth
+            f"{self.base_url}/anagrafichecore.tecnico/find-by-user",
+            params=params,
+            auth=self.auth,
         ).json()["resId"]
         self.cache[key] = res_id
         return res_id

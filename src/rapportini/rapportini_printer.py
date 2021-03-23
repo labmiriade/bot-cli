@@ -49,7 +49,10 @@ def full_rapp(indents: int = 1, hide_date: bool = False) -> Callable[[Rapportino
 
         # the header with date (if not hidden) and hours
         header = "{}{}{}".format(
-            click.style(f"{r['rapportinoId']} " if int(r["rapportinoId"]) > 0 else "", fg="green"),
+            click.style(
+                f"{r['rapportinoId']} " if int(r["rapportinoId"]) > 0 else "",
+                fg="green",
+            ),
             click.style(f"{d:<12} " if not hide_date else "", fg="green"),
             click.style(f"{h:<35}", fg="yellow"),
         )
@@ -82,19 +85,29 @@ def short_rapp(indents: int = 1, hide_date: bool = False) -> Callable[[Rapportin
 
     def printer(r: Rapportino):
         click.secho(f"{ind}{r['rapportinoId']:>9} ", fg="yellow", nl=False)
-        click.secho(f" {hour(r['quantityHours'], r['quantityMinutes']):>5} ", fg="cyan", nl=False)
+        click.secho(
+            f" {hour(r['quantityHours'], r['quantityMinutes']):>5} ",
+            fg="cyan",
+            nl=False,
+        )
         click.secho(f" {r['commessa']} ", fg="bright_green", nl=False)
         click.secho(f" {r['attivita']} ", nl=True)
 
     return printer
 
 
-def deleted_rapp(indents: int = 1) -> Callable[[DeletedRapportino, Optional[str]], None]:
+def deleted_rapp(
+    indents: int = 1,
+) -> Callable[[DeletedRapportino, Optional[str]], None]:
     ind = " " * indents
 
     def printer(r: DeletedRapportino, commessa: Optional[str]):
         click.secho(f"{ind}{r['rapportinoId']} ", fg="yellow", nl=False)
-        click.secho(f"{datefromt(r['date']).strftime('%a %d-%m-%Y')}", fg="green", nl=commessa is None)
+        click.secho(
+            f"{datefromt(r['date']).strftime('%a %d-%m-%Y')}",
+            fg="green",
+            nl=commessa is None,
+        )
         if commessa is not None:
             click.secho(f"{ind}{commessa}", fg="cyan", nl=True)
         click.secho(f"{ind}{r['description']}", nl=True)
