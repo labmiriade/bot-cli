@@ -14,7 +14,7 @@ from src.cli_utils import MIRBOT_FOLDER
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
 TOKEN_LOCATION = os.path.join(MIRBOT_FOLDER, "google-token.json")
-CREDENTIALS_LOCATION = "credentials.json"
+CREDENTIALS_LOCATION = os.path.join(os.path.dirname(__file__), "credentials.json")
 
 
 def _load_credentials(token_location: str = TOKEN_LOCATION) -> Optional[Credentials]:
