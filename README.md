@@ -16,7 +16,7 @@ Per controllare esegui `python3 --version` nel terminale.
 Il comando si installa con *pip* il [Package Installer per Python](https://pypi.org/project/pip/).
 
 ```sh
-python3 -m pip install --upgrade https://github.com/labmiriade/bot-cli/releases/latest/download/bot_cli.whl
+python3 -m pip install --upgrade https://github.com/labmiriade/bot-cli/releases/latest/download/bot_cli-1.0.0-py3-none-any.whl
 ```
 
 ### 2. _Opzionale_ Aggiungere l'autocompletamento
