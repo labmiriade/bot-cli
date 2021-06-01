@@ -34,6 +34,9 @@ from .rapportini_printer import full_rapp, short_rapp
 def ls(repo, data: datetime.datetime, count: Optional[int], fmt: str):
     if data is not None:
         data = data.replace(tzinfo=datetime.timezone.utc)
+        if data.year < 2000:  # if the current year is not specified
+            current_year = datetime.date.today().year
+            data = data.replace(year=current_year)
         count = count or 1
     else:
         data = datetime.datetime.now(tz=datetime.timezone.utc)
