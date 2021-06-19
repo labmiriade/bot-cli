@@ -6,6 +6,7 @@ import click
 
 from .rapportini_printer import offices_choices, full_rapp
 from ..cli_utils import stored_creds, get_default
+from ..repositories import location_finder
 from ..repositories.bot import Bot, Commessa, Rapportino
 from ..utils import merge_id_desc, unmerge_id_desc, parse_ore_minuti
 
@@ -85,6 +86,8 @@ def validate_office(ctx, params, value):
     Raises:
         (click.BadParameter) if the inputed value is not right
     """
+    if value is None:
+        return None
     for office in offices_choices:
         if office.lower().startswith(click.unstyle(value).lower()):
             return office
@@ -92,11 +95,10 @@ def validate_office(ctx, params, value):
     raise click.BadParameter("indica il numero della sede")
 
 
-def office_prompt() -> str:
+def office_prompt(default_office: Optional[str]) -> str:
     """
     Returns the prompt for asking the chosen office highlighting the default one
     """
-    default_office = get_default(["rapp", "add", "sede~soft"])
     if default_office is not None:
         matching_offices_idxs = [
             i for i, o in enumerate(offices_choices) if o.lower().startswith(default_office.lower())
@@ -215,8 +217,7 @@ def _yesterday() -> datetime.datetime:
     "-s",
     "--sede",
     type=click.STRING,
-    prompt=office_prompt(),
-    default=get_default(["rapp", "add", "sede~soft"]),
+    default=None,
     callback=validate_office,
     help="Indica la sede in cui hai svolto l'attività",
 )
@@ -252,12 +253,36 @@ def add(
     if data.year < 2000:
         data = data.replace(year=datetime.datetime.now().year)
     date = int(data.timestamp()) * 1000
-    # get office_id from sede
-    office_id = unmerge_id_desc(sede)[0]
 
     # get the the job description from the job_id
     job_id = unmerge_id_desc(commessa)[0]
     full_commessa: Commessa = ctx.obj.get_commessa(job_id)
+
+    # set the location
+    if sede is None:
+        today = datetime.date.today()
+        predicted_office: Optional[str] = None  # try to predict the user's location
+
+        # check if the date is today and the user is in some location
+        if data.year == today.year and data.month == today.month and data.day == today.day:
+            predicted_office = location_finder.current_location()
+
+        # if the location is predicted, use it
+        # otherwise rely on user config
+        if predicted_office is not None:
+            office = predicted_office
+            office_name = " ".join(predicted_office.split("_")[1:])
+            click.secho(
+                f"in base alla data dei rapportini e alla tua posizione, deduco tu sia a {office_name}",
+                fg="bright_black",
+            )
+        else:
+            office = get_default(["rapp", "add", "sede~soft"])
+
+        sede = click.prompt(office_prompt(office), value_proc=validate_office, default=office)
+
+    # get office_id from sede
+    office_id = unmerge_id_desc(sede)[0]
 
     # create the Rapportino to store default and inputed data
     r = Rapportino(
