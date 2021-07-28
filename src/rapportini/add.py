@@ -73,7 +73,22 @@ def get_attivita_compl(ctx, args, incomplete: str):
         return []
 
 
-def validate_office(ctx, params, value):
+def validate_office(value: str) -> Optional[str]:
+    """
+    This is a callback to verify that the inserted office exists and is a valid one
+    Args:
+        value (): the value inputed by the user
+    Returns:
+        the office if it is valid (with complete value)
+    """
+    if value is not None:
+        for office in offices_choices:
+            if office.lower().startswith(click.unstyle(value).lower()):
+                return office
+    return None
+
+
+def validate_office_from_option(ctx, params, value):
     """
     This is a callback to verify that the inserted office exists and is a valid one
     Args:
@@ -88,11 +103,14 @@ def validate_office(ctx, params, value):
     """
     if value is None:
         return None
-    for office in offices_choices:
-        if office.lower().startswith(click.unstyle(value).lower()):
-            return office
-    click.secho(f"{value} is not an accepted value", fg="red")
-    raise click.BadParameter("indica il numero della sede")
+
+    office = validate_office(value)
+
+    if office is None:
+        click.secho(f"{value} is not an accepted value", fg="red")
+        raise click.BadParameter("indica il numero della sede")
+    else:
+        return office
 
 
 def office_prompt(default_office: Optional[str]) -> str:
@@ -218,7 +236,7 @@ def _yesterday() -> datetime.datetime:
     "--sede",
     type=click.STRING,
     default=None,
-    callback=validate_office,
+    callback=validate_office_from_option,
     help="Indica la sede in cui hai svolto l'attività",
 )
 # whether the flag trasferta should be inserted
